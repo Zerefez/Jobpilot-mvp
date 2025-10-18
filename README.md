@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 🎯 Resume Coach Feature
+
+**AI-powered tool to improve resumes and cover letters!**
+
+### Quick Start
+1. Get your OpenAI API key from https://platform.openai.com/api-keys
+2. Create `.env.local` with: `OPENAI_API_KEY=your_key`
+3. Run `npm install && npm run dev`
+4. Go to http://localhost:3000/resume-coach
+
+See **[QUICK_START.md](./QUICK_START.md)** for detailed setup instructions.
+
 ## Getting Started
 
 First, run the development server:
