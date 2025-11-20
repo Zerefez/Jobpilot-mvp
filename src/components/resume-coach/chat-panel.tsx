@@ -42,7 +42,7 @@ export function ChatPanel({
           <div className="text-center text-gray-500">
             <p className="text-lg font-semibold mb-2">Welcome to Resume Coach</p>
             <p className="text-sm">
-              Fill in your details on the left and click "Start Analysis" to begin
+              Fill in your details on the left and click &quot;Start Analysis&quot; to begin
             </p>
           </div>
         </div>
