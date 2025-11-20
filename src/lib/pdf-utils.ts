@@ -1,8 +1,14 @@
 import * as pdfjsLib from 'pdfjs-dist';
+import type { TextItem, TextMarkedContent } from 'pdfjs-dist/types/src/display/api';
 
 // Set up the worker from the public folder
 if (typeof window !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+}
+
+// Type guard to check if an item is a TextItem
+function isTextItem(item: TextItem | TextMarkedContent): item is TextItem {
+  return 'str' in item;
 }
 
 export async function extractTextFromPDF(file: File): Promise<string> {
@@ -20,7 +26,8 @@ export async function extractTextFromPDF(file: File): Promise<string> {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
         const pageText = textContent.items
-          .map((item: any) => (item as any).str || '')
+          .filter(isTextItem)
+          .map((item) => item.str || '')
           .join(' ');
         fullText += pageText + '\n';
       } catch (pageError) {

@@ -7,6 +7,41 @@ if (!OPENAI_API_KEY) {
   console.warn('OPENAI_API_KEY is not set');
 }
 
+// OpenAI API response types
+interface OpenAIMessage {
+  role: string;
+  content: string;
+}
+
+interface OpenAIChoice {
+  message: OpenAIMessage;
+  finish_reason: string;
+  index: number;
+}
+
+interface OpenAIUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+interface OpenAIResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: OpenAIChoice[];
+  usage: OpenAIUsage;
+}
+
+interface OpenAIErrorResponse {
+  error: {
+    message: string;
+    type: string;
+    code?: string;
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     if (!OPENAI_API_KEY) {
@@ -60,16 +95,34 @@ Provide concise, practical advice and potential improved drafts when requested.`
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('OpenAI API error:', error);
+      const errorData: OpenAIErrorResponse = await response.json();
+      console.error('OpenAI API error:', errorData);
       return NextResponse.json(
         { error: 'Failed to get response from AI' },
         { status: response.status }
       );
     }
 
-    const data = await response.json();
-    const message = data.choices[0].message.content;
+    const data: OpenAIResponse = await response.json();
+    
+    // Defensive checks for API response structure
+    if (!data.choices || data.choices.length === 0) {
+      console.error('OpenAI API returned no choices');
+      return NextResponse.json(
+        { error: 'Invalid response from AI' },
+        { status: 500 }
+      );
+    }
+
+    const message = data.choices[0]?.message?.content;
+    
+    if (!message) {
+      console.error('OpenAI API returned no message content');
+      return NextResponse.json(
+        { error: 'Invalid response from AI' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       message,
